@@ -29,7 +29,7 @@ export class MainPage extends BasePage {
         this.postsList = this.page.locator('//div[contains(@class, "cards")]/div[contains(@class, "card")]');
         this.categorySelector = this.page.locator('//label[text()="Категория"]/following-sibling::select[1]');
         this.prioritySelector = this.page.locator('//label[text()="Приоритет"]/following-sibling::select[1]');
-        this.prorityToggle = this.page.locator('//input[@type="checkbox" and contains(@class, "ugrentToggle")]');
+        this.prorityToggle = this.page.locator('//input[@type="checkbox" and contains(@class, "urgentToggle")]');
         this.sortingSelector = this.page.locator('//label[text()="Сортировать по"]/following-sibling::select[1]');
         this.orderSelector = this.page.locator('//label[text()="Порядок"]/following-sibling::select[1]');
         this.emptyResultMessage = this.page.locator('//div[contains(@class, "empty")]');
