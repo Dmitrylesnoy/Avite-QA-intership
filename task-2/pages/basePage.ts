@@ -9,6 +9,12 @@ export abstract class BasePage {
 
     protected abstract root(): Locator;
     protected abstract pageName: string;
+    protected abstract pageUrl: string;
+
+    async open() {
+        await this.page.goto(this.pageUrl);
+        await this.waitForOpen();
+    }
 
     async waitForOpen() {
         await expect(this.root(),

@@ -4,8 +4,9 @@ import * as postCard from "./types/postCard";
 
 export class MainPage extends BasePage {
     protected pageName = "Главная страница";
+    protected pageUrl = "/";
 
-    readonly rootLocator: Locator;
+    readonly header: Locator;
     readonly statsPageBtn: Locator;
     readonly postsList: Locator;
     readonly priceDownInput: Locator;
@@ -15,23 +16,25 @@ export class MainPage extends BasePage {
     readonly prorityToggle: Locator;
     readonly sortingSelector: Locator;
     readonly orderSelector: Locator;
+    readonly emptyResultMessage: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.rootLocator = this.page.locator("#root");
+        this.header = this.page.locator("header");
         this.statsPageBtn = this.page.locator("[href='/stats']");
-        this.priceDownInput = this.page.locator("input[placeholder='От']");
-        this.priceUpInput = this.page.locator("input[placeholder='До']");
-        this.postsList = this.page.locator("\\div[contains(@class, 'cards')]");
-        this.categorySelector = this.page.locator("//label[text()='Категория']/following-sibling::select[1]");
-        this.prioritySelector = this.page.locator("//label[text()='Приоритет']/following-sibling::select[1]");
-        this.prorityToggle = this.page.locator("//input[@type='checkbox' and contains(@class, 'ugrentToggle')]");
-        this.sortingSelector = this.page.locator("//label[text()='Сортировать по']/following-sibling::select[1]");
-        this.orderSelector = this.page.locator("//label[text()='Порядок']/following-sibling::select[1]");
+        this.priceDownInput = this.page.locator('//input[@placeholder="От"]');
+        this.priceUpInput = this.page.locator('//input[@placeholder="До"]');
+        this.postsList = this.page.locator('//div[contains(@class, "cards")]/div[contains(@class, "card")]');
+        this.categorySelector = this.page.locator('//label[text()="Категория"]/following-sibling::select[1]');
+        this.prioritySelector = this.page.locator('//label[text()="Приоритет"]/following-sibling::select[1]');
+        this.prorityToggle = this.page.locator('//input[@type="checkbox" and contains(@class, "ugrentToggle")]');
+        this.sortingSelector = this.page.locator('//label[text()="Сортировать по"]/following-sibling::select[1]');
+        this.orderSelector = this.page.locator('//label[text()="Порядок"]/following-sibling::select[1]');
+        this.emptyResultMessage = this.page.locator('//div[contains(@class, "empty")]');
     }
 
     protected root(): Locator {
-        return this.page.locator("#root");
+        return this.header;
     }
 
     async clickStatsPageBtn(): Promise<void> {
@@ -46,17 +49,39 @@ export class MainPage extends BasePage {
         await this.priceUpInput.fill(price.toString());
     }
 
+    async clearPriceDown() {
+        await this.priceDownInput.fill('');
+    }
+
+    async clearPriceUp() {
+        await this.priceUpInput.fill('');
+    }
+
     async getPosts() {
+        if (await this.emptyResultMessage.isVisible()) {
+            return [];
+        }
+        await this.postsList.first().waitFor();
         const postsList: postCard.PostItem[] = [];
         const postElements = await this.postsList.all();
-        for (const post of postElements) {
-            const title = await post.locator(postCard.titleSelector).textContent() ?? "";
-            const price = parseFloat(await post.locator(postCard.priceSelector).textContent() ?? "0");
+
+        for (const [index, post] of postElements.entries()) {
+            const postClass = await post.getAttribute('class');
+
+            const title = await post.locator(postCard.titleSelector).first().textContent() ?? "";
+
+            const priceRaw = await post.locator(postCard.priceSelector).textContent() ?? "0";
+            const price = parseFloat(priceRaw.replace(/[^\d.-]/g, '')) || 0;
+
             const category = await post.locator(postCard.categorySelector).textContent() ?? "";
-            const express = await post.locator(postCard.prioritySelector).textContent() == "Срочно" ? true : false;
+
+            const priorityElement = post.locator(postCard.prioritySelector);
+            const priorityCount = await priorityElement.count();
+            const priority = priorityCount > 0 ? (await priorityElement.textContent() ?? "").includes("Срочно") : false;
+
             const status = await post.locator(postCard.statusSelector).textContent() ?? "";
             const date = await post.locator(postCard.dateSelector).textContent() ?? "";
-            postsList.push({ title, price, category, express, status, date });
+            postsList.push({ title, price, category, priority, status, date });
         }
         return postsList;
     }
@@ -68,11 +93,11 @@ export class MainPage extends BasePage {
     async setPriority(priority: string) {
         await this.prioritySelector.selectOption({ label: priority });
     }
-    
+
     async togglePriority() {
         await this.prorityToggle.click();
     }
-    
+
     async setSorting(sorting: string) {
         await this.sortingSelector.selectOption({ label: sorting });
     }

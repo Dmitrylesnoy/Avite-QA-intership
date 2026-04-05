@@ -12,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const BASE_URL = "https://testboard.avito.com";
+const BASE_URL = "https://cerulean-praline-8e5aa6.netlify.app";
 
 export default defineConfig({
   testDir: './tests',
@@ -47,15 +47,15 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], baseURL: BASE_URL },
     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'], baseURL: BASE_URL },
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'], baseURL: BASE_URL },
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'], baseURL: BASE_URL },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'], baseURL: BASE_URL },
+    // },
 
     /* Test against mobile viewports. */
     // {
