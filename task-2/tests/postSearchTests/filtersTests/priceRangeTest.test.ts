@@ -22,15 +22,14 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
 
   test('Вариант 2: Только "До" = -1 - фильтр не применился', async () => {
     await mainPage.clearPriceDown();
-    await mainPage.setPriceUp(-1);
-
-    const posts = await mainPage.getPosts();
+    await mainPage.clearPriceUp();
     const allPostsWithoutFilter = await mainPage.getPosts();
 
-    // Фильтр не должен применяться, поэтому количество объявлений должно быть тем же
-    // Но поскольку мы устанавливаем фильтр, нужно проверить, что результаты не изменились
+    await mainPage.setPriceUp(-1);
+    const posts = await mainPage.getPosts();
+
     expect(posts.length).toBeGreaterThan(0);
-    expect(posts.length).toBe(allPostsWithoutFilter.length);
+    expect(posts.map(post => post.title)).toEqual(allPostsWithoutFilter.map(post => post.title));
   });
 
   test('Вариант 3: Только "До" = 0.1 - объявления с ценой до 0.1', async () => {
@@ -58,15 +57,15 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
   });
 
   test('Вариант 5: "От" = -1, "До" пустое - фильтр не применился', async () => {
-    await mainPage.setPriceDown(-1);
+    await mainPage.clearPriceDown();
     await mainPage.clearPriceUp();
-
-    const posts = await mainPage.getPosts();
     const allPostsWithoutFilter = await mainPage.getPosts();
 
-    // Фильтр не должен применяться, поэтому количество объявлений должно быть тем же
+    await mainPage.setPriceDown(-1);
+    const posts = await mainPage.getPosts();
+
     expect(posts.length).toBeGreaterThan(0);
-    expect(posts.length).toBe(allPostsWithoutFilter.length);
+    expect(posts.map(post => post.title)).toEqual(allPostsWithoutFilter.map(post => post.title));
 
   });
 
