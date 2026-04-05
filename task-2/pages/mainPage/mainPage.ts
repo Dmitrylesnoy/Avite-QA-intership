@@ -1,6 +1,7 @@
 import { Locator, Page } from "@playwright/test";
 import { BasePage } from "../basePage";
 import * as postCard from "./types/postCard";
+import { sortingMap, sortOrderMap } from './types/consts';
 
 export class MainPage extends BasePage {
     protected pageName = "Главная страница";
@@ -29,20 +30,20 @@ export class MainPage extends BasePage {
         this.postsList = this.page.locator('//div[contains(@class, "cards")]/div[contains(@class, "card")]');
         this.categorySelector = this.page.locator('//label[text()="Категория"]/following-sibling::select[1]');
         this.prioritySelector = this.page.locator('//label[text()="Приоритет"]/following-sibling::select[1]');
-        this.prorityToggle = this.page.locator('//input[@type="checkbox" and contains(@class, "urgentToggle")]');
-        this.sortingSelector = this.page.locator('//label[text()="Сортировать по"]/following-sibling::select[1]');
+        this.prorityToggle = this.page.locator('//span[contains(@class, "urgentToggle") and contains(@class, "slider")]');
+        this.sortingSelector = this.page.locator('//label[text()="Сортировать по"]/following-sibling::select');
         this.orderSelector = this.page.locator('//label[text()="Порядок"]/following-sibling::select[1]');
         this.emptyResultMessage = this.page.locator('//div[contains(@class, "empty")]');
         this.themeToggleButton = this.page.locator('button:has-text("Светлая"), button:has-text("Темная")');
         this.themeLocator = this.page.locator(':root');
-    
+
     }
 
     protected root(): Locator {
         return this.header;
     }
 
-    async clickStatsPageBtn(): Promise<void> {
+    async clickStatsPageBtn() {
         await this.clickAndWaitForUrl(this.statsPageBtn, /\/stats/);
     }
 
@@ -104,42 +105,46 @@ export class MainPage extends BasePage {
     }
 
     async setSorting(sorting: string) {
-        await this.sortingSelector.selectOption({ label: sorting });
+        const optionValue = sortingMap[sorting];
+        if (!optionValue) {
+            throw new Error(`Unknown sorting option: ${sorting}`);
+        }
+        await this.sortingSelector.selectOption(optionValue);
     }
 
-    async getSortingOption(): Promise<string> {
+    async getSortingOption() {
         return (await this.sortingSelector.locator('option:checked').textContent())?.trim() ?? '';
     }
 
     async setOrder(order: string) {
-        await this.orderSelector.selectOption({ label: order });
+        const optionValue = sortOrderMap[order];
+        if (!optionValue) {
+            throw new Error(`Unknown sort order: ${order}`);
+        }
+        await this.orderSelector.selectOption(optionValue);
     }
 
-    async getOrderOption(): Promise<string> {
+    async getOrderOption() {
         return (await this.orderSelector.locator('option:checked').textContent())?.trim() ?? '';
     }
 
-    async clickThemeToggle(): Promise<void> {
+    async clickThemeToggle() {
         await this.themeToggleButton.click();
     }
 
-    async getThemeToggleText(): Promise<string> {
+    async getThemeToggleText() {
         return (await this.themeToggleButton.textContent())?.trim() ?? '';
     }
 
-    async getTheme(): Promise<string> {
+    async getTheme() {
         return await this.themeLocator.getAttribute('data-theme') ?? '';
     }
 
-    async isPriorityToggleChecked(): Promise<boolean> {
+    async isPriorityToggleChecked() {
         return await this.prorityToggle.isChecked();
     }
 
-    async getSelectedPriority(): Promise<string> {
-        return (await this.prioritySelector.locator('option:checked').textContent())?.trim() ?? '';
-    }
-
-    async getSelectedCategory(): Promise<string> {
-        return (await this.categorySelector.locator('option:checked').textContent())?.trim() ?? '';
+    async getSelectedPriority() {
+        return await this.prioritySelector.textContent();
     }
 }

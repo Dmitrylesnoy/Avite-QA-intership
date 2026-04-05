@@ -3,7 +3,7 @@ export const prioritiesMap: Record<string, string> = {
     'Срочный': 'urgent',
 };
 
-export const categoriesMap: Record<string, number> = {
+    export const categoriesMap: Record<string, number> = {
     'Электроника': 0,
     'Недвижимость': 1,
     'Транспорт': 2,
@@ -17,7 +17,9 @@ export const categoriesMap: Record<string, number> = {
 export const sortingMap: Record<string, string> = {
     'Дате создания': 'createdAt',
     'Цене': 'price',
+    'Цена': 'price',
     'Приоритету': 'priority',
+    'Приоритет': 'priority',
 };
 
 export const sortOrderMap: Record<string, string> = {
