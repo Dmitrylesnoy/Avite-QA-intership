@@ -1,14 +1,14 @@
-# Compiled Object files, Static and Dynamic libs (Shared Objects)
-*.o
-*.a
-*.so
+# Node
+node_modules/
+package-lock.json
 
-# IDE system files
-.idea
-.vscode
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
 
-# vendoring cache directory
-.cache
-
-# Go workspace files
-.env.override
+.DS_Store
+.idea/
+.env
