@@ -26,6 +26,4 @@ export abstract class BasePage {
             clickable.click()
         ]);
     }
-
-    
 }
