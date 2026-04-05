@@ -11,7 +11,6 @@ test.describe('STATS-TIMER-01: Проверка управления тайме�
         await mainPage.open();
         mainPage.clickStatsPageBtn();
         statsPage = new StatsPage(page);
-        // statsPage.waitForOpen();
     });
 
     test('Кнопка "Обновить" сбрасывает таймер к 5 минутам 0 секунд', async () => {
@@ -20,10 +19,7 @@ test.describe('STATS-TIMER-01: Проверка управления тайме�
         await statsPage.clickRefreshTimerBtn();
 
         const refreshedValue = await statsPage.getTimerValue();
-        expect(refreshedValue).toContain('5');
-        expect(refreshedValue).toContain('минут');
-        expect(refreshedValue).toContain('0');
-        expect(refreshedValue).toContain('секунд');
+        expect(refreshedValue).toContain('5:00');
     });
 
     test('Кнопка остановки таймера останавливает автообновление и показывает сообщение', async () => {
@@ -50,10 +46,7 @@ test.describe('STATS-TIMER-01: Проверка управления тайме�
     test('Полный цикл управления таймером: обновить -> остановить -> запустить', async () => {
         await statsPage.clickRefreshTimerBtn();
         let timerValue = await statsPage.getTimerValue();
-        expect(timerValue).toContain('5');
-        expect(timerValue).toContain('минут');
-        expect(timerValue).toContain('0');
-        expect(timerValue).toContain('секунд');
+        expect(timerValue).toContain('5:00');
 
         await statsPage.clickToggleTimerBtn();
         expect(await statsPage.getToggleButtonText()).toMatch(/Запустить|Включить/);
