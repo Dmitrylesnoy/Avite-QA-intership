@@ -1,0 +1,41 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/1/item"
+  method: POST
+  headers:
+    Content-Type: application/json
+    Accept: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "sellerID": "<integer>",
+        "name": "<string>",
+        "price": "<integer>",
+        "statistics": {
+          "likes": "<integer>",
+          "viewCount": "<integer>",
+          "contacts": "<integer>"
+        }
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "<string>",
+        "sellerId": "<integer>",
+        "name": "<string>",
+        "price": "<integer>",
+        "statistics": {
+          "likes": "<integer>",
+          "viewCount": "<integer>",
+          "contacts": "<integer>"
+        },
+        "createdAt": "<string>"
+      }
+order: 1000

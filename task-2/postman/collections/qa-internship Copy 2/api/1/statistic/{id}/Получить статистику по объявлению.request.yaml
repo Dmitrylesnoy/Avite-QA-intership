@@ -1,0 +1,12 @@
+$kind: http-request
+description: Получить статистику по объявлению
+url: "{{baseUrl}}/api/1/statistic/:id"
+method: GET
+headers:
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: <string>
+    description: (Required) идентификатор объявления
+examples: ./.resources/Получить статистику по объявлению.resources/examples
+order: 1000
