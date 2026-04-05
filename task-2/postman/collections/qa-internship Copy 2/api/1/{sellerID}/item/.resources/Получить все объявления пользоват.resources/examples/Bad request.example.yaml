@@ -1,0 +1,28 @@
+$kind: http-example
+request:
+  url: "{{baseUrl}}/api/1/:sellerID/item"
+  method: GET
+  headers:
+    Accept: application/json
+  pathVariables:
+    sellerID: ""
+response:
+  statusCode: 400
+  statusText: Bad Request
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "result": {
+          "messages": {
+            "culpa_b92": "<string>",
+            "enim_24f": "<string>",
+            "mollit_aa": "<string>"
+          },
+          "message": "<string>"
+        },
+        "status": "<string>"
+      }
+order: 2000

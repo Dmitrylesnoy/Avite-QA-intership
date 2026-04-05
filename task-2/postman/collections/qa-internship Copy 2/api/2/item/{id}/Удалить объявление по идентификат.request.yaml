@@ -1,0 +1,13 @@
+$kind: http-request
+name: Удалить объявление по идентификатору
+description: Удалить объявление по идентификатору
+url: "{{baseUrl}}/api/2/item/:id"
+method: DELETE
+headers:
+  Accept: application/json
+pathVariables:
+  - key: id
+    value: <string>
+    description: (Required) идентификатор объявления
+examples: ./.resources/Удалить объявление по идентификат.resources/examples
+order: 1000

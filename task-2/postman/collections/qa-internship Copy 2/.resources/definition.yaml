@@ -1,0 +1,3 @@
+$kind: collection
+variables:
+  baseUrl: https://qa-internship.avito.com
