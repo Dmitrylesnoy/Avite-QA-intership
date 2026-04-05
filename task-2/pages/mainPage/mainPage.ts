@@ -1,4 +1,4 @@
-import { Locator, Page, Expect } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { BasePage } from "../basePage";
 import * as postCard from "./types/postCard";
 
@@ -17,6 +17,8 @@ export class MainPage extends BasePage {
     readonly sortingSelector: Locator;
     readonly orderSelector: Locator;
     readonly emptyResultMessage: Locator;
+    readonly themeToggleButton: Locator;
+    readonly themeLocator: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -31,6 +33,9 @@ export class MainPage extends BasePage {
         this.sortingSelector = this.page.locator('//label[text()="Сортировать по"]/following-sibling::select[1]');
         this.orderSelector = this.page.locator('//label[text()="Порядок"]/following-sibling::select[1]');
         this.emptyResultMessage = this.page.locator('//div[contains(@class, "empty")]');
+        this.themeToggleButton = this.page.locator('button:has-text("Светлая"), button:has-text("Темная")');
+        this.themeLocator = this.page.locator(':root');
+    
     }
 
     protected root(): Locator {
@@ -102,7 +107,39 @@ export class MainPage extends BasePage {
         await this.sortingSelector.selectOption({ label: sorting });
     }
 
+    async getSortingOption(): Promise<string> {
+        return (await this.sortingSelector.locator('option:checked').textContent())?.trim() ?? '';
+    }
+
     async setOrder(order: string) {
         await this.orderSelector.selectOption({ label: order });
+    }
+
+    async getOrderOption(): Promise<string> {
+        return (await this.orderSelector.locator('option:checked').textContent())?.trim() ?? '';
+    }
+
+    async clickThemeToggle(): Promise<void> {
+        await this.themeToggleButton.click();
+    }
+
+    async getThemeToggleText(): Promise<string> {
+        return (await this.themeToggleButton.textContent())?.trim() ?? '';
+    }
+
+    async getTheme(): Promise<string> {
+        return await this.themeLocator.getAttribute('data-theme') ?? '';
+    }
+
+    async isPriorityToggleChecked(): Promise<boolean> {
+        return await this.prorityToggle.isChecked();
+    }
+
+    async getSelectedPriority(): Promise<string> {
+        return (await this.prioritySelector.locator('option:checked').textContent())?.trim() ?? '';
+    }
+
+    async getSelectedCategory(): Promise<string> {
+        return (await this.categorySelector.locator('option:checked').textContent())?.trim() ?? '';
     }
 }

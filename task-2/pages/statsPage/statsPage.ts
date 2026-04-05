@@ -1,21 +1,23 @@
-import { Locator, Page, Expect } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { BasePage } from "../basePage";
 
 export class StatsPage extends BasePage {
-    protected pageName = "Cтраница статистики";
+    protected pageName = "Страница статистики";
     protected pageUrl = "/stats";
 
     readonly header: Locator;
     readonly refreshTimerbtn: Locator;
     readonly toggleTimerBtn: Locator;
     readonly timerValue: Locator;
+    readonly autoUpdateDisabledMsg: Locator;
 
     constructor(page: Page) {
         super(page);
-        this.header = this.page.locator("\\header");
-        this.refreshTimerbtn = this.page.locator("\\button[contains(@class, 'refresh')]");
-        this.toggleTimerBtn = this.page.locator("\\button[contains(@class, 'toggle')]")
-        this.timerValue = this.page.locator("\\span[contains(@class, 'timerLabel')]");
+        this.header = this.page.locator("//header");
+        this.refreshTimerbtn = this.page.locator("//button[contains(@class, 'refresh')]");
+        this.toggleTimerBtn = this.page.locator("//button[contains(@class, 'toggle')]")
+        this.timerValue = this.page.locator("//span[contains(@class, 'timerLabel')]");
+        this.autoUpdateDisabledMsg = this.page.locator('//span[@text="Автообновление выключено"]');
     }
 
     protected root(): Locator {
@@ -23,7 +25,7 @@ export class StatsPage extends BasePage {
     }
 
     async open() {
-        await this.page.goto("/list");
+        await this.page.goto(this.pageUrl);
         await this.waitForOpen();
     }
 
@@ -35,12 +37,20 @@ export class StatsPage extends BasePage {
         await this.toggleTimerBtn.click();
     }
 
+    async getToggleButtonText(): Promise<string> {
+        return (await this.toggleTimerBtn.textContent())?.trim() ?? '';
+    }
+
     async getToggleBtnState() {
         const classAttr = await this.toggleTimerBtn.getAttribute('class');
         return classAttr ? classAttr.includes('active') : false;
     }
 
     async getTimerValue() {
-        return await this.timerValue.textContent();
+        return (await this.timerValue.textContent())?.trim() ?? '';
+    }
+
+    async isUpdateDisabledMsgVisible(): Promise<boolean> {
+        return await this.autoUpdateDisabledMsg.isVisible();
     }
 }
