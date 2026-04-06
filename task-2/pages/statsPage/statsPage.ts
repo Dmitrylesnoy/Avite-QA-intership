@@ -16,7 +16,7 @@ export class StatsPage extends BasePage {
         this.header = this.page.locator("//header");
         this.refreshTimerbtn = this.page.locator("//button[contains(@class, 'refresh')]");
         this.toggleTimerBtn = this.page.locator("//button[contains(@class, 'toggle')]")
-        this.timerValue = this.page.locator("//span[contains(@class, 'timerValue')]");
+        this.timerValue = this.page.locator("//span[contains(@class, 'timeValue')]");
         this.autoUpdateDisabledMsg = this.page.locator('//span[contains(text(), "Автообновление выключено")]');
     }
 
@@ -51,6 +51,6 @@ export class StatsPage extends BasePage {
     }
 
     async isUpdateDisabledMsgVisible() {
-        await this.autoUpdateDisabledMsg.isVisible();
+        return await this.autoUpdateDisabledMsg.isVisible();
     }
 }

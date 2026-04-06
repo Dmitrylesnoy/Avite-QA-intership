@@ -38,7 +38,6 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
 
     const posts = await mainPage.getPosts();
 
-    // Проверить, что все объявления имеют цену <= 0.1
     for (const post of posts) {
       expect(post.price).toBeLessThanOrEqual(0.1);
     }
@@ -75,7 +74,6 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
 
     const posts = await mainPage.getPosts();
 
-    // Проверить, что все объявления имеют цену >= 0.1
     for (const post of posts) {
       expect(post.price).toBeGreaterThanOrEqual(0.1);
     }
@@ -87,7 +85,6 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
 
     const posts = await mainPage.getPosts();
 
-    // Должно быть 0 объявлений, так как 1000 > 10
     expect(posts.length).toBe(0);
   });
 
@@ -97,7 +94,6 @@ test.describe('FILTER-PRICE-01: Проверка работы фильтра "Д
 
     const posts = await mainPage.getPosts();
 
-    // Проверить, что все объявления имеют цену в диапазоне [10, 10000]
     for (const post of posts) {
       expect(post.price).toBeGreaterThanOrEqual(10);
       expect(post.price).toBeLessThanOrEqual(10000);

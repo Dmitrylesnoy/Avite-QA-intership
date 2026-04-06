@@ -22,7 +22,7 @@ test.describe('FILTER-CATEG-01: Проверка фильтра категори
             const posts = await mainPage.getPosts();
 
             expect(posts.length).toBeGreaterThan(0);
-            expect(posts.every(post => post.category.includes(category))).toBeTruthy();
+            expect(posts.every(post => post.category.includes(category)), `Не все объявления соответствуют категории ${category}`).toBeTruthy();
         });
     }
 });

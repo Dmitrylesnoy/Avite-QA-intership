@@ -22,6 +22,6 @@ test.describe('SORT-PRICE-01: Проверка сортировки по цен�
         const descendingPosts = await mainPage.getPosts();
         if (!descendingPosts) throw new Error("Не удалось получить список объявлений");
         const descendingPrices = descendingPosts.map((post: any) => post.price);
-        expect(descendingPrices).toEqual([...descendingPrices].sort((a, b) => b - a));
+        expect(descendingPrices, "Цены не отсортированы по убыванию").toEqual([...descendingPrices].sort((a, b) => b - a));
     });
 });

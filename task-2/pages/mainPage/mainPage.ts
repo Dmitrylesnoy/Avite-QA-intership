@@ -20,6 +20,7 @@ export class MainPage extends BasePage {
     readonly emptyResultMessage: Locator;
     readonly themeToggleButton: Locator;
     readonly themeLocator: Locator;
+    readonly nextPaginationBtn: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -36,7 +37,7 @@ export class MainPage extends BasePage {
         this.emptyResultMessage = this.page.locator('//div[contains(@class, "empty")]');
         this.themeToggleButton = this.page.locator('button:has-text("Светлая"), button:has-text("Темная")');
         this.themeLocator = this.page.locator(':root');
-
+        this.nextPaginationBtn = this.page.locator('//button[@title="Следующая страница"]');
     }
 
     protected root(): Locator {
@@ -63,31 +64,39 @@ export class MainPage extends BasePage {
         await this.priceUpInput.fill('');
     }
 
-    async getPosts() {
+    async getPosts(count: number = 20) {
         if (await this.emptyResultMessage.isVisible()) {
             return [];
         }
-        await this.postsList.first().waitFor();
+
         const postsList: postCard.PostItem[] = [];
-        const postElements = await this.postsList.all();
 
-        for (const [index, post] of postElements.entries()) {
-            const postClass = await post.getAttribute('class');
+        while (await this.nextPaginationBtn.isEnabled() && postsList.length <= count) {
+            await this.nextPaginationBtn.click();
+            await this.waitForOpen();
 
-            const title = await post.locator(postCard.titleSelector).first().textContent() ?? "";
+            await this.postsList.first().waitFor();
+            const postElements = await this.postsList.all();
 
-            const priceRaw = await post.locator(postCard.priceSelector).textContent() ?? "0";
-            const price = parseFloat(priceRaw.replace(/[^\d.-]/g, '')) || 0;
+            for (const post of postElements) {
+                const title = await post.locator(postCard.titleSelector).first().textContent() ?? "";
 
-            const category = await post.locator(postCard.categorySelector).textContent() ?? "";
+                const priceRaw = await post.locator(postCard.priceSelector).textContent() ?? "0";
+                const price = parseFloat(priceRaw.replace(/[^\d.-]/g, '')) || 0;
 
-            const priorityElement = post.locator(postCard.prioritySelector);
-            const priorityCount = await priorityElement.count();
-            const priority = priorityCount > 0 ? (await priorityElement.textContent() ?? "").includes("Срочно") : false;
+                const category = await post.locator(postCard.categorySelector).textContent() ?? "";
 
-            const status = await post.locator(postCard.statusSelector).textContent() ?? "";
-            const date = await post.locator(postCard.dateSelector).textContent() ?? "";
-            postsList.push({ title, price, category, priority, status, date });
+                const priorityElement = post.locator(postCard.prioritySelector);
+                const priorityCount = await priorityElement.count();
+                const priority = priorityCount > 0 ? (await priorityElement.textContent() ?? "").includes("Срочно") : false;
+
+                const status = await post.locator(postCard.statusSelector).textContent() ?? "";
+                const date = await post.locator(postCard.dateSelector).textContent() ?? "";
+                postsList.push({ title, price, category, priority, status, date });
+                if (postsList.length >= count) {
+                    break;
+                }
+            }
         }
         return postsList;
     }
